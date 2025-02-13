@@ -49,3 +49,6 @@
 [submodule "src/userplugins/vencord-whos-watching"]
 	path = src/userplugins/vencord-whos-watching
 	url = https://github.com/fres621/vencord-whos-watching.git
+[submodule "src/userplugins/kyuuhachi-plugins"]
+	path = src/userplugins/kyuuhachi-plugins
+	url = https://github.com/Kyuuhachi/VencordPlugins.git
