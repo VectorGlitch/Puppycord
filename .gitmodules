@@ -1,3 +1,51 @@
 [submodule "src/userplugins/PluralKitIntegration"]
 	path = src/userplugins/PluralKitIntegration
 	url = https://github.com/AdalynBlack/PluralKitIntegration.git
+[submodule "src/userplugins/videoStartNotifier"]
+	path = src/userplugins/videoStartNotifier
+	url = https://github.com/redbaron2k7/videoStartNotifier.git
+[submodule "src/userplugins/EvilMod"]
+	path = src/userplugins/EvilMod
+	url = https://github.com/reversedcodes/EvilMod.git
+[submodule "src/userplugins/in-role"]
+	path = src/userplugins/in-role
+	url = https://git.nin0.dev/userplugins/in-role.git
+[submodule "src/userplugins/plugin-unitConverter"]
+	path = src/userplugins/plugin-unitConverter
+	url = https://github.com/sadan4/plugin-unitConverter.git
+[submodule "src/userplugins/ShowAllRoles"]
+	path = src/userplugins/ShowAllRoles
+	url = https://github.com/parknich/ShowAllRoles.git
+[submodule "src/userplugins/ShowSessions"]
+	path = src/userplugins/ShowSessions
+	url = https://github.com/Zv-yz/ShowSessions.git
+[submodule "src/userplugins/teaganControl"]
+	path = src/userplugins/teaganControl
+	url = https://github.com/VectorGlitch/teaganControl.git
+[submodule "src/userplugins/userflags"]
+	path = src/userplugins/userflags
+	url = https://git.nin0.dev/userplugins/userflags.git
+[submodule "src/userplugins/vc-fullUserInChatbox"]
+	path = src/userplugins/vc-fullUserInChatbox
+	url = https://github.com/sadan4/vc-fullUserInChatbox.git
+[submodule "src/userplugins/vc-message-logger-enhanced"]
+	path = src/userplugins/vc-message-logger-enhanced
+	url = https://github.com/Syncxv/vc-message-logger-enhanced.git
+[submodule "src/userplugins/vc-randomqolstuff"]
+	path = src/userplugins/vc-randomqolstuff
+	url = https://github.com/Masterjoona/vc-randomqolstuff.git
+[submodule "src/userplugins/vc-sidebarchat"]
+	path = src/userplugins/vc-sidebarchat
+	url = https://github.com/Masterjoona/vc-sidebarchat.git
+[submodule "src/userplugins/vc-stalker-plugin"]
+	path = src/userplugins/vc-stalker-plugin
+	url = https://github.com/zastlx/vc-stalker-plugin.git
+[submodule "src/userplugins/vc-unreadcountbadge"]
+	path = src/userplugins/vc-unreadcountbadge
+	url = https://github.com/Masterjoona/vc-unreadcountbadge.git
+[submodule "src/userplugins/vencord-KeywordNotify"]
+	path = src/userplugins/vencord-KeywordNotify
+	url = https://github.com/camila314/vencord-KeywordNotify.git
+[submodule "src/userplugins/vencord-whos-watching"]
+	path = src/userplugins/vencord-whos-watching
+	url = https://github.com/fres621/vencord-whos-watching.git
