@@ -1,0 +1,3 @@
+[submodule "src/userplugins/PluralKitIntegration"]
+	path = src/userplugins/PluralKitIntegration
+	url = https://github.com/AdalynBlack/PluralKitIntegration.git
