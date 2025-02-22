@@ -29,7 +29,7 @@ export type GenericStore = t.FluxStore & Record<string, any>;
 
 export const DraftType = findByPropsLazy("ChannelMessage", "SlashCommand");
 
-export let MessageStore: Omit<Stores.MessageStore, "getMessages"> & GenericStore & {
+export let MessageStore: Omit<Stores.MessageStore, "getMessages"> & {
     getMessages(chanId: string): any;
 };
 

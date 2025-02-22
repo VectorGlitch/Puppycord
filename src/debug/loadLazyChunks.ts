@@ -68,7 +68,7 @@ export async function loadLazyChunks() {
 
                     const isWorkerAsset = await fetch(wreq.p + wreq.u(id))
                         .then(r => r.text())
-                        .then(t => /importScripts\(|self\.postMessage/.test(t));
+                        .then(t => t.includes("importScripts("));
 
                     if (isWorkerAsset) {
                         invalidChunks.add(id);
@@ -174,7 +174,7 @@ export async function loadLazyChunks() {
         await Promise.all(chunksLeft.map(async id => {
             const isWorkerAsset = await fetch(wreq.p + wreq.u(id))
                 .then(r => r.text())
-                .then(t => /importScripts\(|self\.postMessage/.test(t));
+                .then(t => t.includes("importScripts("));
 
             // Loads the chunk. Currently this only happens with the language packs which are loaded differently
             if (!isWorkerAsset) {

@@ -17,6 +17,7 @@
 
 @media(width <= 485px) {
     .vc-image-modal {
+        display: relative;
         overflow: visible;
         overflow: initial;
     }

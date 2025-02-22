@@ -12,8 +12,8 @@ import { canonicalizeReplacement } from "@utils/patches";
 import { Patch, PatchReplacement } from "@utils/types";
 
 import { traceFunctionWithResults } from "../debug/Tracer";
-import { _blacklistBadModules, _initWebpack, factoryListeners, findModuleFactory, moduleListeners, waitForSubscriptions, wreq } from "./webpack";
-import { AnyModuleFactory, AnyWebpackRequire, MaybePatchedModuleFactory, PatchedModuleFactory, WebpackRequire } from "./wreq.d";
+import { _blacklistBadModules, _initWebpack, factoryListeners, findModuleId, moduleListeners, waitForSubscriptions, wreq } from "./webpack";
+import { AnyModuleFactory, AnyWebpackRequire, MaybePatchedModuleFactory, ModuleExports, PatchedModuleFactory, WebpackRequire } from "./wreq.d";
 
 export const patches = [] as Patch[];
 
@@ -27,26 +27,28 @@ export const patchTimings = [] as Array<[plugin: string, moduleId: PropertyKey, 
 
 export const getBuildNumber = makeLazy(() => {
     try {
-        function matchBuildNumber(factoryStr: string) {
-            const buildNumberMatch = factoryStr.match(/.concat\("(\d+?)"\)/);
-            if (buildNumberMatch == null) {
-                return -1;
-            }
+        try {
+            if (wreq.m[128014]?.toString().includes("Trying to open a changelog for an invalid build number")) {
+                const hardcodedGetBuildNumber = wreq(128014).b as () => number;
 
-            return Number(buildNumberMatch[1]);
+                if (typeof hardcodedGetBuildNumber === "function" && typeof hardcodedGetBuildNumber() === "number") {
+                    return hardcodedGetBuildNumber();
+                }
+            }
+        } catch { }
+
+        const moduleId = findModuleId("Trying to open a changelog for an invalid build number");
+        if (moduleId == null) {
+            return -1;
         }
 
-        const hardcodedFactoryStr = String(wreq.m[128014]);
-        if (hardcodedFactoryStr.includes("Trying to open a changelog for an invalid build number")) {
-            const hardcodedBuildNumber = matchBuildNumber(hardcodedFactoryStr);
-
-            if (hardcodedBuildNumber !== -1) {
-                return hardcodedBuildNumber;
-            }
+        const exports = Object.values<ModuleExports>(wreq(moduleId));
+        if (exports.length !== 1 || typeof exports[0] !== "function") {
+            return -1;
         }
 
-        const moduleFactory = findModuleFactory("Trying to open a changelog for an invalid build number");
-        return matchBuildNumber(String(moduleFactory));
+        const buildNumber = exports[0]();
+        return typeof buildNumber === "number" ? buildNumber : -1;
     } catch {
         return -1;
     }
@@ -120,12 +122,12 @@ define(Function.prototype, "m", {
                     return;
                 }
 
+                patchThisInstance();
+
                 if (wreq == null && this.c != null) {
                     logger.info("Main WebpackInstance found" + interpolateIfDefined` in ${fileName}` + ", initializing internal references to WebpackRequire");
                     _initWebpack(this as WebpackRequire);
                 }
-
-                patchThisInstance();
             }
         });
 
@@ -191,13 +193,13 @@ define(Function.prototype, "m", {
 
             // Overwrite Webpack's defineExports function to define the export descriptors configurable.
             // This is needed so we can later blacklist specific exports from Webpack search by making them non-enumerable
-            this.d = function (exports, definition) {
-                for (const key in definition) {
-                    if (Object.hasOwn(definition, key) && !Object.hasOwn(exports, key)) {
+            this.d = function (exports: object, getters: object) {
+                for (const key in getters) {
+                    if (Object.hasOwn(getters, key) && !Object.hasOwn(exports, key)) {
                         Object.defineProperty(exports, key, {
                             enumerable: true,
                             configurable: true,
-                            get: definition[key],
+                            get: getters[key],
                         });
                     }
                 }
@@ -295,6 +297,11 @@ function updateExistingFactory(moduleFactories: AnyWebpackRequire["m"], moduleId
     }
 
     if (existingFactory != null) {
+        // Sanity check to make sure these factories are equal
+        if (String(newFactory) !== String(existingFactory)) {
+            return false;
+        }
+
         // If existingFactory exists in any of the Webpack instances we track, it's either wrapped in our proxy, or it has already been required.
         // In the case it is wrapped in our proxy, and the instance we are setting does not already have it, we need to make sure the instance contains our proxy too.
         if (moduleFactoriesWithFactory !== moduleFactories && existingFactory[SYM_IS_PROXIED_FACTORY]) {
@@ -410,15 +417,14 @@ function runFactoryWithWrap(patchedFactory: PatchedModuleFactory, thisArg: unkno
     }
 
     exports = module.exports;
+    if (exports == null) {
+        return factoryReturn;
+    }
 
     if (typeof require === "function" && require.c) {
         if (_blacklistBadModules(require.c, exports, module.id)) {
             return factoryReturn;
         }
-    }
-
-    if (exports == null) {
-        return factoryReturn;
     }
 
     for (const callback of moduleListeners) {
@@ -476,23 +482,23 @@ function patchFactory(moduleId: PropertyKey, originalFactory: AnyModuleFactory):
     for (let i = 0; i < patches.length; i++) {
         const patch = patches[i];
 
-        const buildNumber = getBuildNumber();
-        const shouldCheckBuildNumber = buildNumber !== -1;
+        const moduleMatches = typeof patch.find === "string"
+            ? code.includes(patch.find)
+            : (patch.find.global && (patch.find.lastIndex = 0), patch.find.test(code));
+
+        if (!moduleMatches) {
+            continue;
+        }
+
+        // Eager patches cannot retrieve the build number because this code runs before the module for it is loaded
+        const buildNumber = Settings.eagerPatches ? -1 : getBuildNumber();
+        const shouldCheckBuildNumber = !Settings.eagerPatches && buildNumber !== -1;
 
         if (
             shouldCheckBuildNumber &&
             (patch.fromBuild != null && buildNumber < patch.fromBuild) ||
             (patch.toBuild != null && buildNumber > patch.toBuild)
         ) {
-            patches.splice(i--, 1);
-            continue;
-        }
-
-        const moduleMatches = typeof patch.find === "string"
-            ? code.includes(patch.find)
-            : (patch.find.global && (patch.find.lastIndex = 0), patch.find.test(code));
-
-        if (!moduleMatches) {
             continue;
         }
 
@@ -534,7 +540,7 @@ function patchFactory(moduleId: PropertyKey, originalFactory: AnyModuleFactory):
                 }
 
                 if (newCode === code) {
-                    if (!(patch.noWarn || replacement.noWarn)) {
+                    if (!patch.noWarn) {
                         logger.warn(`Patch by ${patch.plugin} had no effect (Module id is ${String(moduleId)}): ${replacement.match}`);
                         if (IS_DEV) {
                             logger.debug("Function Source:\n", code);
@@ -556,13 +562,8 @@ function patchFactory(moduleId: PropertyKey, originalFactory: AnyModuleFactory):
                     continue;
                 }
 
-                const pluginsList = [...patchedBy];
-                if (!patchedBy.has(patch.plugin)) {
-                    pluginsList.push(patch.plugin);
-                }
-
                 code = newCode;
-                patchedSource = `// Webpack Module ${String(moduleId)} - Patched by ${pluginsList.join(", ")}\n${newCode}\n//# sourceURL=WebpackModule${String(moduleId)}`;
+                patchedSource = `// Webpack Module ${String(moduleId)} - Patched by ${[...patchedBy, patch.plugin].join(", ")}\n${newCode}\n//# sourceURL=WebpackModule${String(moduleId)}`;
                 patchedFactory = (0, eval)(patchedSource);
 
                 if (!patchedBy.has(patch.plugin)) {

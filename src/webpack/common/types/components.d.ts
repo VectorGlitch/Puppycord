@@ -527,7 +527,7 @@ export type Avatar = ComponentType<PropsWithChildren<{
 }>>;
 
 type FocusLock = ComponentType<PropsWithChildren<{
-    containerRef: Ref<HTMLElement>;
+    containerRef: RefObject<HTMLElement>;
 }>>;
 
 export type Icon = ComponentType<JSX.IntrinsicElements["svg"] & {

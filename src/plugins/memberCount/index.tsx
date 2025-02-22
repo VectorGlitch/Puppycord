@@ -65,18 +65,10 @@ export default definePlugin({
     patches: [
         {
             find: "{isSidebarVisible:",
-            replacement: [
-                {
-                    // FIXME(Bundler spread transform related): Remove old compatiblity once enough time has passed, if they don't revert
-                    match: /(?<=let\{className:(\i),.+?children):\[(\i\.useMemo[^}]+"aria-multiselectable")/,
-                    replace: ":[$1?.startsWith('members')?$self.render():null,$2",
-                    noWarn: true
-                },
-                {
-                    match: /(?<=var\{className:(\i),.+?children):\[(\i\.useMemo[^}]+"aria-multiselectable")/,
-                    replace: ":[$1?.startsWith('members')?$self.render():null,$2",
-                },
-            ],
+            replacement: {
+                match: /(?<=let\{className:(\i),.+?children):\[(\i\.useMemo[^}]+"aria-multiselectable")/,
+                replace: ":[$1?.startsWith('members')?$self.render():null,$2"
+            },
             predicate: () => settings.store.memberList
         },
         {

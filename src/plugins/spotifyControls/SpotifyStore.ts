@@ -77,7 +77,7 @@ export const SpotifyStore = proxyLazyWebpack(() => {
 
     class SpotifyStore extends Store {
         public mPosition = 0;
-        public _start = 0;
+        private start = 0;
 
         public track: Track | null = null;
         public device: Device | null = null;
@@ -100,26 +100,26 @@ export const SpotifyStore = proxyLazyWebpack(() => {
         public get position(): number {
             let pos = this.mPosition;
             if (this.isPlaying) {
-                pos += Date.now() - this._start;
+                pos += Date.now() - this.start;
             }
             return pos;
         }
 
         public set position(p: number) {
             this.mPosition = p;
-            this._start = Date.now();
+            this.start = Date.now();
         }
 
         prev() {
-            this._req("post", "/previous");
+            this.req("post", "/previous");
         }
 
         next() {
-            this._req("post", "/next");
+            this.req("post", "/next");
         }
 
         setVolume(percent: number) {
-            this._req("put", "/volume", {
+            this.req("put", "/volume", {
                 query: {
                     volume_percent: Math.round(percent)
                 }
@@ -131,17 +131,17 @@ export const SpotifyStore = proxyLazyWebpack(() => {
         }
 
         setPlaying(playing: boolean) {
-            this._req("put", playing ? "/play" : "/pause");
+            this.req("put", playing ? "/play" : "/pause");
         }
 
         setRepeat(state: Repeat) {
-            this._req("put", "/repeat", {
+            this.req("put", "/repeat", {
                 query: { state }
             });
         }
 
         setShuffle(state: boolean) {
-            this._req("put", "/shuffle", {
+            this.req("put", "/shuffle", {
                 query: { state }
             }).then(() => {
                 this.shuffle = state;
@@ -154,7 +154,7 @@ export const SpotifyStore = proxyLazyWebpack(() => {
 
             this.isSettingPosition = true;
 
-            return this._req("put", "/seek", {
+            return this.req("put", "/seek", {
                 query: {
                     position_ms: Math.round(ms)
                 }
@@ -164,7 +164,7 @@ export const SpotifyStore = proxyLazyWebpack(() => {
             });
         }
 
-        _req(method: "post" | "get" | "put", route: string, data: any = {}) {
+        private req(method: "post" | "get" | "put", route: string, data: any = {}) {
             if (this.device?.is_active)
                 (data.query ??= {}).device_id = this.device.id;
 

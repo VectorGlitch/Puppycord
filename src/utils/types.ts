@@ -41,12 +41,7 @@ export interface PatchReplacement {
     match: string | RegExp;
     /** The replacement string or function which returns the string for the patch replacement */
     replace: string | ReplaceFn;
-    /** Do not warn if this replacement did no changes */
-    noWarn?: boolean;
-    /**
-     * A function which returns whether this patch replacement should be applied.
-     * This is ran before patches are registered, so if this returns false, the patch will never be registered.
-     */
+    /** A function which returns whether this patch replacement should be applied */
     predicate?(): boolean;
     /** The minimum build number for this patch to be applied */
     fromBuild?: number;
@@ -66,10 +61,7 @@ export interface Patch {
     noWarn?: boolean;
     /** Only apply this set of replacements if all of them succeed. Use this if your replacements depend on each other */
     group?: boolean;
-    /**
-     * A function which returns whether this patch replacement should be applied.
-     * This is ran before patches are registered, so if this returns false, the patch will never be registered.
-     */
+    /** A function which returns whether this patch should be applied */
     predicate?(): boolean;
     /** The minimum build number for this patch to be applied */
     fromBuild?: number;

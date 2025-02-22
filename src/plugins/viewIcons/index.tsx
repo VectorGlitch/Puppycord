@@ -193,18 +193,10 @@ export default definePlugin({
         // Avatar component used in User DMs "User Profile" popup in the right and Profiles Modal pfp
         {
             find: ".overlay:void 0,status:",
-            replacement: [
-                {
-                    // FIXME(Bundler spread transform related): Remove old compatiblity once enough time has passed, if they don't revert
-                    match: /avatarSrc:(\i),eventHandlers:(\i).+?"div",{...\2,/,
-                    replace: "$&style:{cursor:\"pointer\"},onClick:()=>{$self.openAvatar($1)},",
-                    noWarn: true
-                },
-                {
-                    match: /avatarSrc:(\i),eventHandlers:(\i).+?"div",.{0,100}className:\i,/,
-                    replace: "$&style:{cursor:\"pointer\"},onClick:()=>{$self.openAvatar($1)},",
-                }
-            ],
+            replacement: {
+                match: /avatarSrc:(\i),eventHandlers:(\i).+?"div",{...\2,/,
+                replace: "$&style:{cursor:\"pointer\"},onClick:()=>{$self.openAvatar($1)},"
+            },
             all: true
         },
         // Banners

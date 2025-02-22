@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { DraftType } from "@webpack/common";
 import { Channel, Guild, Role } from "discord-types/general";
 
 import { FluxDispatcher, FluxEvents } from "./utils";
@@ -228,7 +229,7 @@ export class ThemeStore extends FluxStore {
 }
 
 export type useStateFromStores = <T>(
-    stores: any[],
+    stores: t.FluxStore[],
     mapper: () => T,
     dependencies?: any,
     isEqual?: (old: T, newer: T) => boolean
