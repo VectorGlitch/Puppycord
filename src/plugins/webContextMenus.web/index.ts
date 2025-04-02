@@ -42,15 +42,12 @@ const settings = definePluginSettings({
     addBack: {
         type: OptionType.BOOLEAN,
         description: "Add back the Discord context menus for images, links and the chat input bar",
-        default: false,
-        restartNeeded: true,
         // Web slate menu has proper spellcheck suggestions and image context menu is also pretty good,
-        // so disable this by default. Vesktop just doesn't, so we force enable it there
-        hidden: IS_VESKTOP,
+        // so disable this by default. Vesktop just doesn't, so enable by default
+        default: IS_VESKTOP,
+        restartNeeded: true
     }
 });
-
-const shouldAddBackMenus = () => IS_VESKTOP || settings.store.addBack;
 
 const MEDIA_PROXY_URL = "https://media.discordapp.net";
 const CDN_URL = "cdn.discordapp.com";
@@ -84,7 +81,7 @@ export default definePlugin({
     settings,
 
     start() {
-        if (shouldAddBackMenus()) {
+        if (settings.store.addBack) {
             window.removeEventListener("contextmenu", ctxMenuCallbacks.contextMenuCallbackWeb);
             window.addEventListener("contextmenu", ctxMenuCallbacks.contextMenuCallbackNative);
             this.changedListeners = true;
@@ -147,7 +144,7 @@ export default definePlugin({
         {
             find: 'navId:"image-context"',
             all: true,
-            predicate: shouldAddBackMenus,
+            predicate: () => settings.store.addBack,
             replacement: {
                 // return IS_DESKTOP ? React.createElement(Menu, ...)
                 match: /return \i\.\i(?=\?|&&)/,
@@ -158,7 +155,7 @@ export default definePlugin({
         // Add back link context menu
         {
             find: '"interactionUsernameProfile"',
-            predicate: shouldAddBackMenus,
+            predicate: () => settings.store.addBack,
             replacement: {
                 match: /if\((?="A"===\i\.tagName&&""!==\i\.textContent)/,
                 replace: "if(false&&"
@@ -168,7 +165,7 @@ export default definePlugin({
         // Add back slate / text input context menu
         {
             find: 'getElementById("slate-toolbar"',
-            predicate: shouldAddBackMenus,
+            predicate: () => settings.store.addBack,
             replacement: {
                 match: /(?<=handleContextMenu\(\i\)\{.{0,200}isPlatformEmbedded)\)/,
                 replace: "||true)"
@@ -176,7 +173,7 @@ export default definePlugin({
         },
         {
             find: ".SLASH_COMMAND_SUGGESTIONS_TOGGLED,{",
-            predicate: shouldAddBackMenus,
+            predicate: () => settings.store.addBack,
             replacement: [
                 {
                     // if (!IS_DESKTOP) return null;
@@ -192,7 +189,7 @@ export default definePlugin({
         },
         {
             find: '"add-to-dictionary"',
-            predicate: shouldAddBackMenus,
+            predicate: () => settings.store.addBack,
             replacement: {
                 match: /let\{text:\i=""/,
                 replace: "return [null,null];$&"

@@ -273,7 +273,7 @@ export default definePlugin({
             muteMessage: {
                 type: OptionType.STRING,
                 description: "Mute Message (only self for now)",
-                default: "{{USER}} muted"
+                default: "{{USER}} Muted"
             },
             unmuteMessage: {
                 type: OptionType.STRING,
