@@ -61,3 +61,6 @@
 [submodule "src/userplugins/showPing"]
 	path = src/userplugins/showPing
 	url = https://github.com/nicola02nb/showPing
+[submodule "src/userplugins/venfetch"]
+	path = src/userplugins/venfetch
+	url = https://git.nin0.dev/userplugins/venfetch.git
