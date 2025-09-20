@@ -64,3 +64,6 @@
 [submodule "src/userplugins/venfetch"]
 	path = src/userplugins/venfetch
 	url = https://git.nin0.dev/userplugins/venfetch.git
+[submodule "src/userplugins/voiceUserButtons"]
+	path = src/userplugins/voiceUserButtons
+	url = https://github.com/nicola02nb/voiceUserButtons.git
