@@ -55,9 +55,6 @@
 [submodule "src/userplugins/customSounds"]
 	path = src/userplugins/customSounds
 	url = https://github.com/ScattrdBlade/customSounds.git
-[submodule "src/userplugins/autoCorrect"]
-	path = src/userplugins/autoCorrect
-	url = https://codeberg.org/paige/vc-autocorrect.git
 [submodule "src/userplugins/showPing"]
 	path = src/userplugins/showPing
 	url = https://github.com/nicola02nb/showPing
