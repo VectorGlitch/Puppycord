@@ -52,9 +52,6 @@
 [submodule "src/userplugins/kyuuhachi-plugins"]
 	path = src/userplugins/kyuuhachi-plugins
 	url = https://github.com/Kyuuhachi/VencordPlugins.git
-[submodule "src/userplugins/customSounds"]
-	path = src/userplugins/customSounds
-	url = https://github.com/ScattrdBlade/customSounds.git
 [submodule "src/userplugins/showPing"]
 	path = src/userplugins/showPing
 	url = https://github.com/nicola02nb/showPing
