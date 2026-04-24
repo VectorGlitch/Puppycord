@@ -1,6 +1,3 @@
-[submodule "src/userplugins/PluralKitIntegration"]
-	path = src/userplugins/PluralKitIntegration
-	url = https://github.com/AdalynBlack/PluralKitIntegration.git
 [submodule "src/userplugins/videoStartNotifier"]
 	path = src/userplugins/videoStartNotifier
 	url = https://github.com/redbaron2k7/videoStartNotifier.git
