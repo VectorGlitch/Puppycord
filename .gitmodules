@@ -37,9 +37,6 @@
 [submodule "src/userplugins/vc-stalker-plugin"]
 	path = src/userplugins/vc-stalker-plugin
 	url = https://github.com/zastlx/vc-stalker-plugin.git
-[submodule "src/userplugins/vc-unreadcountbadge"]
-	path = src/userplugins/vc-unreadcountbadge
-	url = https://github.com/Masterjoona/vc-unreadcountbadge.git
 [submodule "src/userplugins/vencord-KeywordNotify"]
 	path = src/userplugins/vencord-KeywordNotify
 	url = https://github.com/camila314/vencord-KeywordNotify.git
